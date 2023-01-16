@@ -1,0 +1,70 @@
+#!/bin/bash  
+dnf -y install wget 
+dnf -y install nginx
+systemctl enable nginx
+systemctl start nginx
+nginx -v
+dnf install mariadb-server mariadb -y
+systemctl enable mariadb
+systemctl start mariadb
+mysql_secure_installation
+mysql -u root -p
+dnf install http://rpms.remirepo.net/enterprise/remi-release-8.rpm -y
+dnf module reset php -y
+dnf module enable php:remi-7.3
+dnf install php73 php73-php-fpm -y
+systemctl start php73-php-fpm
+systemctl enable php73-php-fpm
+dnf install php php-mysqlnd -y
+dnf install php-cli php-soap php-pdo php-bcmath php-mysqlnd php-opcache php-xml php-gd php-intl php-mbstring php-json php-iconv php-zip unzip git -y
+dnf install php73-php-bcmath -y
+dnf install php73-php-ctype -y
+dnf install php73-php-curl -y
+dnf install php73-php-dom -y
+dnf install php73-php-gd -y
+dnf install php73-php-hash -y
+dnf install php73-php-iconv -y
+dnf install php73-php-intl -y
+dnf install php73-php-mbstring -y
+dnf install php73-php-openssl -y
+dnf install php73-php-pdo_mysql -y
+dnf install php73-php-simplexml -y
+dnf install php73-php-soap -y
+dnf install php73-php-spl -y
+dnf install php73-php-xsl -y
+dnf install php73-php-zip -y
+cd /etc/php-fpm.d/
+touch magento.conf
+echo -e '[magento] \nuser = nginx \ngroup = nginx \nlisten.owner = nginx \nlisten.group = nginx \nlisten = /run/php-fpm/magento.sock \npm = ondemand \npm.max_children =  50 \npm.process_idle_timeout = 10s \npm.max_requests = 500 \nchdir = /' >> magento.conf
+systemctl restart php-fpm
+cd ~
+wget https://github.com/magento/magento2/archive/2.3.3.tar.gz
+tar -xvf 2.3.3.tar.gz
+mv magento2-2.3.3 magento
+mv magento /var/www/
+cd ~
+cd /etc/nginx/conf.d/
+touch magento.conf
+echo -e 'upstream fastcgi_backend { \nserver   unix:/run/php-fpm/magento.sock; \n} \nserver { \nlisten 80; \nserver_name m.sarath20.shop; \n \nset $MAGE_ROOT /var/www/magento; \nset $MAGE_MODE developer; \n \naccess_log /var/log/nginx/magento-access.log; \nerror_log /var/log/nginx/magento-error.log; \n \ninclude /var/www/magento/nginx.conf.sample; \n}' >> magento.conf
+systemctl restart php-fpm
+systemctl restart nginx
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+cp /usr/local/bin/composer /usr/bin/
+cd /var/www/
+chmod -R 755 magento/
+chown -R nginx:nginx magento/
+cd ~
+cd /var/www/magento/
+composer update
+composer install
+semanage permissive -a httpd_t
+getenforce
+setenforce 0
+systemctl restart nginx 
+systemctl restart php-fpm
+echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+echo --------------------------------------------------
+echo 'PANI EDUTHU JEEVIKKADA KANDAVANTE OOOMBATHE'
+echo -------------------------------------------------
+echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

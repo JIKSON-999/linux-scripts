@@ -17,22 +17,7 @@ systemctl start php73-php-fpm
 systemctl enable php73-php-fpm
 dnf install php php-mysqlnd -y
 dnf install php-cli php-soap php-pdo php-bcmath php-mysqlnd php-opcache php-xml php-gd php-intl php-mbstring php-json php-iconv php-zip unzip git -y
-dnf install php73-php-bcmath -y
-dnf install php73-php-ctype -y
-dnf install php73-php-curl -y
-dnf install php73-php-dom -y
-dnf install php73-php-gd -y
-dnf install php73-php-hash -y
-dnf install php73-php-iconv -y
-dnf install php73-php-intl -y
-dnf install php73-php-mbstring -y
-dnf install php73-php-openssl -y
-dnf install php73-php-pdo_mysql -y
-dnf install php73-php-simplexml -y
-dnf install php73-php-soap -y
-dnf install php73-php-spl -y
-dnf install php73-php-xsl -y
-dnf install php73-php-zip -y
+dnf install php73-php-bcmath php73-php-ctype php73-php-curl php73-php-dom php73-php-gd php73-php-hash php73-php-iconv php73-php-intl php73-php-mbstring php73-php-openssl php73-php-pdo_mysql php73-php-simplexml php73-php-soap php73-php-spl php73-php-xsl php73-php-zip -y
 cd /etc/php-fpm.d/
 touch magento.conf
 echo -e '[magento] \nuser = nginx \ngroup = nginx \nlisten.owner = nginx \nlisten.group = nginx \nlisten = /run/php-fpm/magento.sock \npm = ondemand \npm.max_children =  50 \npm.process_idle_timeout = 10s \npm.max_requests = 500 \nchdir = /' >> magento.conf
